@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ReactionViewController" customModule="ReactionPresentaion" customModuleProvider="target">
+            <connections>
+                <outlet property="menuViewLeadingConstraint" destination="Xd9-7X-UPO" id="K5U-Be-KIf"/>
+                <outlet property="menuViewTrailingConstraint" destination="yBV-5q-118" id="93Z-f5-PyU"/>
+                <outlet property="menuViews" destination="tKy-Wt-i9E" id="Hg1-nX-nmq"/>
+                <outlet property="previewContentLeadingConstraint" destination="s20-sk-YBH" id="u3F-HV-MVO"/>
+                <outlet property="previewContentTrailingConstraint" destination="QUH-cW-ENb" id="c3T-DT-FCg"/>
+                <outlet property="previewContentView" destination="FpS-0a-GPh" id="S69-cK-pgj"/>
+                <outlet property="reactionSelectionListView" destination="biO-y5-7Kt" id="vbp-8p-KRe"/>
+                <outlet property="reactionViewLeadingConstraint" destination="1gf-i0-vqW" id="gQ6-vr-CPK"/>
+                <outlet property="reactionViewTrailingConstraint" destination="P5y-CA-5tC" id="YxX-f1-Pwo"/>
+                <outlet property="topConstraint" destination="Ipl-OP-UUU" id="ZG5-Wf-vSt"/>
+                <outlet property="view" destination="iN0-l3-epB" id="oW4-OD-vsL"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" placeholderIntrinsicWidth="377" placeholderIntrinsicHeight="50" translatesAutoresizingMaskIntoConstraints="NO" id="biO-y5-7Kt" userLabel="ReactionListView" customClass="ReactionSelectionListView" customModule="ReactionPresentaion" customModuleProvider="target">
+                    <rect key="frame" x="16" y="79" width="361" height="50"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                </view>
+                <view contentMode="scaleToFill" horizontalHuggingPriority="249" placeholderIntrinsicWidth="240" placeholderIntrinsicHeight="128" translatesAutoresizingMaskIntoConstraints="NO" id="FpS-0a-GPh" customClass="PreviewContentView" customModule="ReactionPresentaion" customModuleProvider="target">
+                    <rect key="frame" x="16" y="137" width="240" height="128"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                </view>
+                <view contentMode="scaleToFill" placeholderIntrinsicWidth="240" placeholderIntrinsicHeight="128" translatesAutoresizingMaskIntoConstraints="NO" id="tKy-Wt-i9E" customClass="MenuView" customModule="ReactionPresentaion" customModuleProvider="target">
+                    <rect key="frame" x="16" y="273" width="240" height="128"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <constraints>
+                <constraint firstItem="biO-y5-7Kt" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="1gf-i0-vqW"/>
+                <constraint firstItem="biO-y5-7Kt" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" priority="250" constant="20" id="Ipl-OP-UUU"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="biO-y5-7Kt" secondAttribute="trailing" constant="16" id="P5y-CA-5tC"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="FpS-0a-GPh" secondAttribute="trailing" constant="16" id="QUH-cW-ENb"/>
+                <constraint firstItem="tKy-Wt-i9E" firstAttribute="leading" secondItem="FpS-0a-GPh" secondAttribute="leading" id="Xd9-7X-UPO"/>
+                <constraint firstItem="tKy-Wt-i9E" firstAttribute="top" secondItem="FpS-0a-GPh" secondAttribute="bottom" constant="8" id="dci-Op-dob"/>
+                <constraint firstItem="FpS-0a-GPh" firstAttribute="width" relation="lessThanOrEqual" secondItem="iN0-l3-epB" secondAttribute="width" constant="-100" id="ghD-Ka-R7u"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="tKy-Wt-i9E" secondAttribute="bottom" priority="750" constant="20" id="k8s-az-p1H"/>
+                <constraint firstItem="FpS-0a-GPh" firstAttribute="top" secondItem="biO-y5-7Kt" secondAttribute="bottom" constant="8" id="rxG-OA-S4X"/>
+                <constraint firstItem="FpS-0a-GPh" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="s20-sk-YBH"/>
+                <constraint firstItem="biO-y5-7Kt" firstAttribute="top" relation="greaterThanOrEqual" secondItem="vUN-kp-3ea" secondAttribute="top" constant="20" id="tmk-Bb-z7B"/>
+                <constraint firstItem="tKy-Wt-i9E" firstAttribute="trailing" secondItem="FpS-0a-GPh" secondAttribute="trailing" id="yBV-5q-118"/>
+            </constraints>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="QUH-cW-ENb"/>
+                    <exclude reference="yBV-5q-118"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="-66" y="20"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
