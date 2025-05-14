@@ -15,7 +15,6 @@ class ViewController: UIViewController, UIContextMenuInteractionDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        reactionPresentationTransitionController.transitioningViewController = self
         interactionView.layer.cornerRadius = 16
     }
     
@@ -51,14 +50,3 @@ class ViewController: UIViewController, UIContextMenuInteractionDelegate {
     }
 }
 
-extension ViewController: ReactionViewControllerDelegate {
-    var reactionViewControllerSourceView: UIView? {
-        interactionView
-    }
-}
-
-extension ViewController: ReactionPresentationTransitioningDelegate {
-    var reactionPresentationControllerSourceView: UIView {
-        interactionView
-    }
-}

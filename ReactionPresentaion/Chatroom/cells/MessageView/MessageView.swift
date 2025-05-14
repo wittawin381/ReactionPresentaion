@@ -12,25 +12,44 @@ private let kMessageContentPadding: CGFloat = 2
 private let kLabelHorizontalPadding: CGFloat = 8
 private let kLabelVerticalPadding: CGFloat = 6
 
-protocol MessageViewDelegate: AnyObject {
-    var messageViewMessageContentView: UIView { get }
-}
-
-class MessageView: UIView {
-    struct Configuration: Hashable {
-        let messageContainerConfiguration: ReactableMessageContainerView.Configuration
-        
-        static let defaultConfiguration = Configuration(
-            messageContainerConfiguration: .defaultConfiguration)
+struct MessageContentConfiguration<MessageContentView>: UIContentConfiguration where MessageContentView: UIView {
+    typealias ContentViewProvider = () -> MessageContentView
+    typealias ContentViewConfigurator = (MessageContentView) -> Void
+    
+    let direction: MessageView<MessageContentView>.Direction
+    let messageContainerConfiguration: ReactableMessageContainerView.Configuration
+    let messageViewActionHandler: MessageView<MessageContentView>.ActionHandler?
+    let messageContentViewProvider: ContentViewProvider?
+    let messageContentViewConfigurator: ContentViewConfigurator
+    
+    init(
+        direction: MessageView<MessageContentView>.Direction,
+        actionHandler: MessageView<MessageContentView>.ActionHandler?,
+        messageContentViewProvider: @escaping ContentViewProvider,
+        messageContentViewConfigurator: @escaping ContentViewConfigurator
+    ) {
+        self.direction = direction
+        self.messageContainerConfiguration = .defaultConfiguration
+        self.messageViewActionHandler = actionHandler
+        self.messageContentViewProvider = messageContentViewProvider
+        self.messageContentViewConfigurator = messageContentViewConfigurator
     }
     
+    func makeContentView() -> any UIView & UIContentView {
+        return MessageView(configuration: self)
+    }
+    
+    func updated(for state: any UIConfigurationState) -> MessageContentConfiguration {
+        self
+    }
+}
+
+class MessageView<MessageContentView>: UIView where MessageContentView: UIView {
     enum Direction {
         case inbound
         case outbound
     }
-    
-    weak var delegate: MessageViewDelegate?
-    
+        
     private let contentView: UIView = {
         let view = UIView()
         return view
@@ -42,32 +61,36 @@ class MessageView: UIView {
         return view
     } ()
     
-    private let defaultContentView: UIView = UIView()
-    var messageContentView: UIView {
-        defaultContentView
-    }
+    private var messageContentView: MessageContentView
     
     private let avatarView = AvatarView()
     
-    private var appliedConfiguration: Configuration = .defaultConfiguration
-    var messageViewConfiguration: Configuration {
-        get { appliedConfiguration }
-        set {
-            guard appliedConfiguration != newValue else { return }
-            apply(configuration: newValue)
-        }
-    }
-    
-    init(direction: Direction, configuration: Configuration = .defaultConfiguration) {
+    private var appliedConfiguration: MessageContentConfiguration<MessageContentView>
+        
+    init(configuration: MessageContentConfiguration<MessageContentView>) {
+        appliedConfiguration = configuration
+        messageContentView = configuration.messageContentViewProvider?() ?? MessageContentView()
+        configuration.messageContentViewConfigurator(messageContentView)
         super.init(frame: .zero)
-        layout(direction: direction)
+        layout(direction: configuration.direction)
         apply(configuration: configuration)
+        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressGestureHandler))
+        messageContainerView.addGestureRecognizer(longPressGesture)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    @objc private func longPressGestureHandler(sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            appliedConfiguration.messageViewActionHandler?.messageViewLongPressActionHandler?(self)
+        }
+    }
+}
+
+extension MessageView {
     private func layout(direction: Direction) {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(contentView)
@@ -85,7 +108,7 @@ class MessageView: UIView {
             avatarView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 avatarView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                avatarView.widthAnchor.constraint(equalToConstant: 18)
+                avatarView.widthAnchor.constraint(equalToConstant: 24)
             ])
             
             contentView.addSubview(messageContainerView)
@@ -111,8 +134,47 @@ class MessageView: UIView {
         
         messageContainerView.addContentView(messageContentView)
     }
+}
+
+extension MessageView: UIContentView {
+    var configuration: any UIContentConfiguration {
+        get { appliedConfiguration }
+        set {
+            guard let newConfiguration = newValue as? MessageContentConfiguration<MessageContentView> else { return }
+            apply(configuration: newConfiguration)
+        }
+    }
     
-    private func apply(configuration: Configuration) {
+    private func apply(configuration: MessageContentConfiguration<MessageContentView>) {
         messageContainerView.configuration = configuration.messageContainerConfiguration
+        configuration.messageContentViewConfigurator(messageContentView)
+    }
+}
+
+extension MessageView {
+    struct ActionHandler {
+        let messageViewLongPressActionHandler: ((UIView) -> Void)?
+        let messageViewProfileImageActionHandler: (() -> Void)?
+    }
+}
+
+extension MessageView: ReactionViewControllerDelegate {
+    var reactionViewControllerSourceView: UIView? {
+        messageContainerView
+    }
+}
+
+extension MessageView: ReactionPresentationTransitioningDelegate {
+    var reactionPresentationControllerLayoutDirection: ReactionViewController.LayoutDirection {
+        switch appliedConfiguration.direction {
+        case .inbound:
+            .leading
+        case .outbound:
+            .trailing
+        }
+    }
+    
+    var reactionPresentationControllerSourceView: UIView {
+        messageContainerView
     }
 }

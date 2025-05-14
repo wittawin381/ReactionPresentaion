@@ -10,9 +10,13 @@ import UIKit
 struct ChatCollectionViewRegistrator: CellRegistration {
     typealias Item = ChatRoomViewController.Item
     
-    let textMessageCellRegistration = ChatRoomTextMessageCellRegistration()
-    let imageMessageCellRegistration = ChatRoomImageMessageCellRegistration()
-    let linkMessageCellRegistration = ChatRoomLinkMessageCellRegistration()
+    let textMessageCellRegistration: ChatRoomTextMessageCellRegistration
+    let imageMessageCellRegistration: ChatRoomImageMessageCellRegistration
+    
+    init(actionHandler: ChatCollectionViewCustomActionConfiguration) {
+        textMessageCellRegistration = ChatRoomTextMessageCellRegistration(actionHandler: actionHandler.textMessageActionConfiguration)
+        imageMessageCellRegistration = ChatRoomImageMessageCellRegistration()
+    }
     
     func cellRegistration(for item: Item) -> any CellRegistrationProvider<Item> {
         let registrator: any CellRegistration<Item> = switch item.type {
@@ -20,11 +24,13 @@ struct ChatCollectionViewRegistrator: CellRegistration {
             textMessageCellRegistration
         case .image:
             imageMessageCellRegistration
-        case .link:
-            linkMessageCellRegistration
         }
         
         return registrator.cellRegistration(for: item)
+    }
+    
+    struct ChatCollectionViewCustomActionConfiguration {
+        let textMessageActionConfiguration: MessageView<UILabel>.ActionHandler
     }
 }
 

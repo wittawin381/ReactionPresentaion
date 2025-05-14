@@ -85,6 +85,7 @@ class ReactionViewController: UIViewController {
     }
     
     private func setupPreviewContentView() {
+        previewContentView.backgroundColor = .clear
         guard let sourceView = delegate?.reactionViewControllerSourceView else { return }
         previewContentView.previewView = sourceView
     }

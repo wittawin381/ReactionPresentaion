@@ -11,6 +11,8 @@ import UIKit
 class ChatRoomViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
+    let reactionPresentationTransitionController = ReactionPresentaionTransitionController()
+    
     typealias Section = ChatRoomCollectionData.Section
     typealias Item = ChatRoomCollectionData.Item
     
@@ -27,7 +29,7 @@ class ChatRoomViewController: UIViewController {
     private func initCollectionView() {
         collectionView.collectionViewLayout = createCollectionViewLayout()
         
-        let registration = ChatCollectionViewRegistrator()
+        let registration = ChatCollectionViewRegistrator(actionHandler: chatRoomCollectionViewActionHandler)
         
         dataSource = UICollectionViewDiffableDataSource<Section.ID, Item.ID>(collectionView: collectionView) { [weak self] collectionView, indexPath, itemIdentifier in
             guard let self, let item = chatRoomStore.item(at: indexPath.section, id: itemIdentifier) else {
@@ -57,5 +59,30 @@ class ChatRoomViewController: UIViewController {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         return UICollectionViewCompositionalLayout(section: section, configuration: configuration)
+    }
+}
+
+extension ChatRoomViewController {
+    private var chatRoomCollectionViewActionHandler: ChatCollectionViewRegistrator.ChatCollectionViewCustomActionConfiguration {
+        ChatCollectionViewRegistrator.ChatCollectionViewCustomActionConfiguration(
+            textMessageActionConfiguration: textMessageActionConfiguration
+        )
+    }
+    
+    private var textMessageActionConfiguration: MessageView<UILabel>.ActionHandler {
+        MessageView<UILabel>.ActionHandler(
+            messageViewLongPressActionHandler: { [weak self] view in
+                guard let self else { return }
+                let reactionViewController = ReactionViewController()
+                reactionViewController.transitioningDelegate = self.reactionPresentationTransitionController
+                reactionViewController.modalPresentationStyle = .custom
+                reactionViewController.delegate = view as? ReactionViewControllerDelegate
+                reactionPresentationTransitionController.transitioningViewController = view as? ReactionPresentationTransitioningDelegate
+                present(reactionViewController, animated: true)
+            },
+            messageViewProfileImageActionHandler: {
+                
+            }
+        )
     }
 }

@@ -7,43 +7,47 @@
 
 import Foundation
 import UIKit
+import LinkPresentation
 
-struct LinkMessageConfiguration: UIContentConfiguration, Hashable {
-    let url: String
+extension MessageContentConfiguration {
+    static func link(
+        direction: MessageView<UILabel>.Direction,
+        actionHandler: MessageView<UILabel>.ActionHandler?,
+        viewConfigurator: @escaping (UILabel) -> Void
+    ) -> MessageContentConfiguration<UILabel> {
+        return MessageContentConfiguration<UILabel>(
+            direction: direction,
+            actionHandler: actionHandler,
+            messageContentViewProvider: {
+                let label = UILabel()
+                label.numberOfLines = 0
+                label.textColor = .systemBackground
+                return label
+            },
+            messageContentViewConfigurator: viewConfigurator
+        )
+    }
+}
+
+protocol LinkPresentableView {
+    var metadataProvider: LPMetadataProvider { get }
+}
+
+class LinkMessageCell: UICollectionViewCell, LinkPresentableView {
+    let metadataProvider = LPMetadataProvider()
     
-    func makeContentView() -> any UIView & UIContentView {
-        LinkMessageView(configuration: self)
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        metadataProvider.cancel()
     }
     
-    func updated(for state: any UIConfigurationState) -> LinkMessageConfiguration {
-        self
-    }
+    
 }
 
 class LinkMessageView: UIView {
-    private var appliedConfiguration: LinkMessageConfiguration = LinkMessageConfiguration(url: "")
+    private let loadingIndicator = UIActivityIndicatorView()
+    private let linkPreview = LPLinkView()
     
-    init(configuration: LinkMessageConfiguration) {
-        super.init(frame: .zero)
-        apply(configuration: configuration)
-    }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension LinkMessageView: UIContentView {
-    var configuration: any UIContentConfiguration {
-        get { appliedConfiguration }
-        set(newValue) {
-            guard let newConfiguration = newValue as? LinkMessageConfiguration else { return }
-            apply(configuration: newConfiguration)
-        }
-    }
-    
-    private func apply(configuration: LinkMessageConfiguration) {
-        guard appliedConfiguration != configuration else { return }
-        appliedConfiguration = configuration
-    }
 }

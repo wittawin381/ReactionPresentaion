@@ -44,7 +44,6 @@ enum ChatRoomCollectionData {
         enum ItemType: Hashable {
             case message(text: String)
             case image(url: String)
-            case link(url: String)
         }
     }
 }
